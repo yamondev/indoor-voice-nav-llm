@@ -31,7 +31,7 @@ Use the command below to clone the repository.
 ```bash
 git clone https://github.com/yamondev/indoor-voice-nav-llm.git
 ```
-Now, in the this clone, move the folder 'map' to the $HOME.  
+Now, in this clone, move the folder 'map' to the $HOME.  
 
 **2. Install Dependencies:**
 
@@ -86,17 +86,17 @@ colcon build
 ```
 
 **6. Run the Demo:**
-Open the map
+Open the map.
 ```bash
-
+ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
+ros2 launch turtlebot3_navigation2 navigation2.launch.py map:=$HOME/map/map_house.yaml use_sim_time:=True autostart:=True use_composition:=False
 ```
-
 Source the setup script and launch the voice assistant system.
 ```bash
 source <your_ws>/install/setup.bash
 ros2 launch llm_bringup local_chatgpt_with_turtle_robot.launch.py
 ```
-start listening
+start listening.
 ```bash
 ros2 topic pub /llm_state std_msgs/msg/String "data: 'listening'" -1
 ```
