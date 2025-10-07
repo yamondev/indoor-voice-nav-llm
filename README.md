@@ -23,7 +23,7 @@
 
 ## 🔥 Quickstart Guide
 
-Follow the instructions below to set up ROS-LLM:
+Follow the instructions below to set up ROS-LLM (before, you have to install ROS2-humble):
 
 **1. Clone the Repository:**
 
