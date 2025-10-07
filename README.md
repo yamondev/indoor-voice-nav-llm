@@ -3,6 +3,7 @@
 [![Ubuntu VERSION](https://img.shields.io/badge/Ubuntu-22.04-green)](https://ubuntu.com/) &nbsp; [![LICENSE](https://img.shields.io/badge/license-Apache--2.0-informational)](https://github.com/Auromix/ROS-LLM/blob/ros2-humble/LICENSE) &nbsp;
 [![GitHub Repo stars](https://img.shields.io/github/stars/Auromix/ROS-LLM?style=social)](https://github.com/Auromix/ROS-LLM/stargazers) &nbsp;
 [![Twitter Follow](https://img.shields.io/twitter/follow/Hermanye233?style=social)](https://twitter.com/Hermanye233) &nbsp;
+[![Linkedin Follow]()](https://www.linkedin.com/in/yannickmoussima/) &nbsp;
 # ROS-LLM
 The ROS-LLM project is a ROS framework for embodied intelligence applications. It enables natural language interactions and large model-based control of robot motion and navigation for any robot operating on ROS.
 
@@ -12,7 +13,7 @@ This framework is designed to be easy to extend. By simply providing a function 
 
 ROS-LLM offers a simple solution for quickly creating interactive and control experiences with any robot.
 
-![Related Schematics](llm_imgs/flow_diagram.png)
+![Related Schematics](llm_imgs/diagram_rosllm.png)
 ## 🚀 Features
 
 - 🤖 **ROS Integration**: Smoothly interacts with the Robot Operating System (ROS) for expansive robotic control. 
