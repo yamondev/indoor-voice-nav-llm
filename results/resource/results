@@ -1,0 +1,248 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+metrics_recorder.py — ROS 2 live metrics logger for your Results chapter
+- Records real-time data from topics to build figures/tables automatically.
+- Focus: Time-to-Speech (TTS), plan length & replans, arrival success & duration.
+
+How it works (high level)
+-------------------------
+1) Subscribes to:
+   - /llm_input_audio_to_text : start of a user request (String)
+   - /llm_feedback_to_user    : first spoken feedback (String)
+   - /plan                    : Nav2 planned path (nav_msgs/Path)
+   - /amcl_pose               : Robot pose (PoseWithCovarianceStamped) to detect arrival
+   - /current_goal (optional) : PoseStamped if your system publishes it
+
+2) Logs CSV files in --output_dir (default: ./metrics_out)
+   - tts_latency.csv : request_id, t_start, t_first_feedback, latency_s
+   - plans.csv       : request_id, plan_id, t_plan, length_m, num_points
+   - replans.csv     : request_id, count
+   - arrivals.csv    : request_id, success, t_start, t_arrival, duration_s, dist_threshold_m
+   - events.csv      : timestamp, event, payload_json
+
+3) On shutdown (Ctrl+C), writes a summary.json and prints a short report.
+
+Usage
+-----
+# In your ROS 2 environment (Humble), install deps if needed:
+#   sudo apt install python3-pip && pip3 install pandas
+
+# Run:
+#   ros2 run YOUR_PKG metrics_recorder --ros-args -p output_dir:=/tmp/metrics
+
+Author: ChatGPT (crafted for Yannick)
+License: MIT
+"""
+import os
+import csv
+import json
+import math
+import time
+from collections import deque
+
+import rclpy
+from rclpy.node import Node
+from rclpy.time import Time
+
+from std_msgs.msg import String
+from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped
+from nav_msgs.msg import Path
+
+class MetricsRecorder(Node):
+    def __init__(self):
+        super().__init__('metrics_recorder')
+        # Params
+        self.declare_parameter('output_dir', './metrics_out')
+        self.declare_parameter('arrival_threshold', 0.4)  # meters
+        self.declare_parameter('max_request_window_s', 20.0)  # timeout linking input->feedback
+
+        self.out_dir = self.get_parameter('output_dir').get_parameter_value().string_value
+        self.arrival_threshold = float(self.get_parameter('arrival_threshold').value)
+        self.max_window = float(self.get_parameter('max_request_window_s').value)
+
+        os.makedirs(self.out_dir, exist_ok=True)
+
+        # CSV paths
+        self.csv_tts = os.path.join(self.out_dir, 'tts_latency.csv')
+        self.csv_plans = os.path.join(self.out_dir, 'plans.csv')
+        self.csv_replans = os.path.join(self.out_dir, 'replans.csv')
+        self.csv_arrivals = os.path.join(self.out_dir, 'arrivals.csv')
+        self.csv_events = os.path.join(self.out_dir, 'events.csv')
+        self.summary_path = os.path.join(self.out_dir, 'summary.json')
+
+        # Open CSV files with headers if not exist
+        self._init_csv(self.csv_tts, ['request_id','t_start','t_first_feedback','latency_s'])
+        self._init_csv(self.csv_plans, ['request_id','plan_id','t_plan','length_m','num_points'])
+        self._init_csv(self.csv_replans, ['request_id','replan_count'])
+        self._init_csv(self.csv_arrivals, ['request_id','success','t_start','t_arrival','duration_s','dist_threshold_m'])
+        self._init_csv(self.csv_events, ['timestamp','event','payload_json'])
+
+        # State
+        self.request_counter = 0
+        self.current_request_id = None
+        self.request_queue = deque()  # tuples (request_id, t_start)
+        self.first_feedback_logged = {}  # request_id -> bool
+        self.plan_id_counter = 0
+        self.latest_plan = None
+        self.latest_plan_request = None
+        self.replan_counts = {}   # request_id -> int
+        self.goal_pose = None     # from last Path endpoint or /current_goal
+        self.request_start_times = {}  # request_id -> t_start
+        self.arrival_logged = set()    # request_ids already closed
+
+        # Subscriptions
+        self.sub_in = self.create_subscription(String, '/llm_input_audio_to_text', self.cb_input, 10)
+        self.sub_feedback = self.create_subscription(String, '/llm_feedback_to_user', self.cb_feedback, 10)
+        self.sub_plan = self.create_subscription(Path, '/plan', self.cb_plan, 10)
+        self.sub_pose = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose', self.cb_pose, 10)
+        self.sub_goal = self.create_subscription(PoseStamped, '/current_goal', self.cb_current_goal, 10)
+
+        self.get_logger().info(f'MetricsRecorder started. Writing to {self.out_dir}')
+
+        # Timer to clean outdated requests
+        self.timer = self.create_timer(1.0, self._housekeeping)
+
+    # ---------- CSV helpers ----------
+    def _init_csv(self, path, headers):
+        if not os.path.exists(path):
+            with open(path, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+
+    def _append_csv(self, path, row):
+        with open(path, 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(row)
+
+    def log_event(self, name, payload):
+        ts = time.time()
+        self._append_csv(self.csv_events, [ts, name, json.dumps(payload, ensure_ascii=False)])
+
+    # ---------- Callbacks ----------
+    def cb_input(self, msg: String):
+        # New user query: create request_id and timestamp
+        self.request_counter += 1
+        rid = f"R{self.request_counter:05d}"
+        t = time.time()
+        self.request_queue.append((rid, t))
+        self.request_start_times[rid] = t
+        self.first_feedback_logged[rid] = False
+        self.replan_counts.setdefault(rid, 0)
+        self.current_request_id = rid
+        self.log_event('user_input', {'request_id': rid, 'text': msg.data})
+        self.get_logger().info(f'New request {rid}: "{msg.data}"')
+
+    def cb_feedback(self, msg: String):
+        # First feedback after the last user input → record TTS latency
+        now = time.time()
+        # find the oldest request without first feedback
+        for rid, t_start in list(self.request_queue):
+            if not self.first_feedback_logged.get(rid, False):
+                latency = now - t_start
+                if latency <= self.max_window:
+                    self._append_csv(self.csv_tts, [rid, t_start, now, f'{latency:.3f}'])
+                    self.first_feedback_logged[rid] = True
+                    self.log_event('first_feedback', {'request_id': rid, 'text': msg.data, 'latency_s': latency})
+                    self.get_logger().info(f'First feedback for {rid}: {latency:.3f}s')
+                    break
+
+    def cb_current_goal(self, msg: PoseStamped):
+        self.goal_pose = msg.pose
+
+    def cb_plan(self, msg: Path):
+        # Whenever a plan arrives, attribute it to current_request_id (best-effort)
+        if self.current_request_id is None and len(self.request_queue) > 0:
+            # fallback on earliest pending
+            self.current_request_id = self.request_queue[-1][0]
+        rid = self.current_request_id or 'R00000'
+        self.plan_id_counter += 1
+        pid = f'P{self.plan_id_counter:05d}'
+        t_plan = time.time()
+
+        # Plan length
+        length = 0.0
+        pts = msg.poses
+        for i in range(len(pts)-1):
+            x1, y1 = pts[i].pose.position.x, pts[i].pose.position.y
+            x2, y2 = pts[i+1].pose.position.x, pts[i+1].pose.position.y
+            length += math.hypot(x2-x1, y2-y1)
+
+        self._append_csv(self.csv_plans, [rid, pid, t_plan, f'{length:.3f}', len(pts)])
+        # Replan counting per request
+        self.replan_counts[rid] = self.replan_counts.get(rid, 0) + 1
+        self._append_csv(self.csv_replans, [rid, self.replan_counts[rid]])
+
+        # Track goal from last point
+        if len(pts) > 0:
+            self.goal_pose = pts[-1].pose
+
+        self.latest_plan = msg
+        self.latest_plan_request = rid
+        self.log_event('plan_received', {'request_id': rid, 'plan_id': pid, 'length_m': length, 'num_points': len(pts)})
+
+    def cb_pose(self, msg: PoseWithCovarianceStamped):
+        # Detect arrival when distance to goal < threshold
+        if self.goal_pose is None:
+            return
+        x = msg.pose.pose.position.x
+        y = msg.pose.pose.position.y
+        gx = self.goal_pose.position.x
+        gy = self.goal_pose.position.y
+        dist = math.hypot(gx - x, gy - y)
+        if dist <= self.arrival_threshold:
+            # attribute arrival to the latest request with an open arrival
+            rid = self.latest_plan_request or (self.current_request_id or 'R00000')
+            if rid not in self.arrival_logged and rid in self.request_start_times:
+                t_start = self.request_start_times[rid]
+                t_arrival = time.time()
+                self._append_csv(self.csv_arrivals, [rid, 1, t_start, t_arrival, f'{(t_arrival - t_start):.3f}', self.arrival_threshold])
+                self.arrival_logged.add(rid)
+                self.log_event('arrival', {'request_id': rid, 'duration_s': (t_arrival - t_start)})
+                self.get_logger().info(f'Arrival detected for {rid}. Duration={(t_arrival - t_start):.2f}s')
+
+    # ---------- Housekeeping ----------
+    def _housekeeping(self):
+        # Remove too-old requests from queue (avoid infinite growth)
+        now = time.time()
+        while self.request_queue and (now - self.request_queue[0][1] > 60.0):
+            self.request_queue.popleft()
+
+    # ---------- Shutdown ----------
+    def destroy_node(self):
+        # Produce quick summary
+        summary = {
+            'tts_samples': self._count_rows(self.csv_tts) - 1,
+            'plans_logged': self._count_rows(self.csv_plans) - 1,
+            'arrivals_logged': self._count_rows(self.csv_arrivals) - 1,
+            'replans_rows': self._count_rows(self.csv_replans) - 1,
+            'generated_at': time.time(),
+            'arrival_threshold_m': self.arrival_threshold,
+        }
+        with open(self.summary_path, 'w') as f:
+            json.dump(summary, f, indent=2)
+        self.get_logger().info(f"Summary written to {self.summary_path}")
+        super().destroy_node()
+
+    def _count_rows(self, path):
+        try:
+            with open(path, 'r') as f:
+                return sum(1 for _ in f)
+        except Exception:
+            return 0
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = MetricsRecorder()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()
+
+

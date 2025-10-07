@@ -80,7 +80,7 @@ class TurtleRobot(Node):
         """
         Publishes cmd_vel message to control the movement of turtlesim
         """
-        linear_x = kwargs.get("linear_x", 0.0)
+        linear_x = kwargs.get("linear_x", 1.0)
         linear_y = kwargs.get("linear_y", 0.0)
         linear_z = kwargs.get("linear_z", 0.0)
         angular_x = kwargs.get("angular_x", 0.0)

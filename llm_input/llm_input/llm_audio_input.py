@@ -48,21 +48,22 @@ from llm_config.user_config import UserConfig
 
 config = UserConfig()
 
-
 class AudioInput(Node):
     def __init__(self):
         super().__init__("llm_audio_input")
 
         # AWS service initialization
         self.aws_audio_file = "/tmp/user_audio_input.flac"
-        self.aws_access_key_id = config.aws_access_key_id
-        self.aws_secret_access_key = config.aws_secret_access_key
-        self.aws_region_name = config.aws_region_name
-        self.aws_session = boto3.Session(
+        #                   self.aws_access_key_id = config.aws_access_key_id
+        #                   self.aws_secret_access_key = config.aws_secret_access_key
+        #                   self.aws_region_name = config.aws_region_name
+        """
+                           self.aws_session = boto3.Session(
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
             region_name=self.aws_region_name,
-        )
+        )"""
+        self.aws_session = boto3.Session()
 
         # Initialization publisher
         self.initialization_publisher = self.create_publisher(
@@ -157,6 +158,7 @@ class AudioInput(Node):
             response = requests.get(transcript_file_url)
             transcript_data = json.loads(response.text)
             transcript_text = transcript_data["results"]["transcripts"][0]["transcript"]
+            
             self.get_logger().info("Audio to text conversion complete!")
             # Step 8: Publish the transcribed text to ROS2
             if transcript_text == "":  # Empty input
@@ -181,8 +183,7 @@ class AudioInput(Node):
             f"Topic: {publisher_to_use.topic_name}\nMessage published: {msg.data}"
         )
 
-
-def main(args=None):
+def main(args=None):  
     rclpy.init(args=args)
 
     audio_input = AudioInput()

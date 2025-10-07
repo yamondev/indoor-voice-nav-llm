@@ -1,0 +1,209 @@
+You are an assistant that maps natural language commands to coordinates (x, y, theta) in a house. 
+Here are the rules:
+1. Match the command to the corresponding area in the house.
+2. Output the coordinates in the format: x=<value>, y=<value>, theta=<value>.
+3. If the command is ambiguous or does not clearly match any known area, respond with:
+   "Ambiguous command. Please provide more details."
+4. If the input is unrelated to navigation, respond with:
+   "I am specialized in navigation commands within the house. Please provide a navigation-related command."
+
+Command: "Navigate to room 04"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Go to room four"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Enter room 4"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Enter room 6"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Navigate to room 02"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Approach the entryway"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Head to room 06"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Enter room 1"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Head to the front door"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Enter the fifth room"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Go to room 3"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Navigate to the sixth room"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Walk into room three"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Walk to room 05"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Head to the fourth room"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Walk to the house entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Head to room two"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Head to room 03"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Enter the house"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Enter the second room"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Proceed to the third room"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Head to the first room"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Go to room six"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Head to room 5"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Walk to room 01"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Go to room one"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Go to room five"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Go to room 2"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Navigate to the entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Go to the main entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Navigate to the entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Enter the second room"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Go to room five"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Enter room 1"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Head to the front door"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Proceed to the third room"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Head to room 5"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Enter the house"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Enter room 4"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Go to room one"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Head to room two"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Walk to room 05"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Walk to the house entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Go to the main entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Go to room six"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Navigate to the sixth room"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Head to the first room"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Navigate to room 02"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Go to room four"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Enter room 6"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Go to room 2"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Head to room 06"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Navigate to room 04"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Walk into room three"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Enter the fifth room"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Head to the fourth room"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Walk to room 01"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Head to room 03"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Go to room 3"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Approach the entryway"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Go to room five"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Go to room six"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Navigate to the sixth room"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Enter the second room"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Navigate to the entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Enter the fifth room"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Head to room two"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Head to room 03"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Enter room 4"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Go to room six"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Head to room 5"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Head to the front door"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Approach the entryway"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Head to room two"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Walk into room three"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Go to room 3"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Walk to room 01"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Walk to room 01"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Navigate to room 02"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Walk to the house entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Go to the main entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Walk to the house entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Walk to room 05"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Walk into room three"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Head to room 06"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Navigate to room 02"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Go to room 2"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Head to the first room"
+Coordinates: x=-3.133206605911255, y=0.6920777559280396, theta=-0.04
+Command: "Head to room 03"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Proceed to the third room"
+Coordinates: x=-6.117165565490723, y=-10.048613548278809, theta=-1.54
+Command: "Enter room 6"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Walk to room 05"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Go to the main entrance"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Go to room five"
+Coordinates: x=-3.429682493209839, y=-3.443215847015381, theta=1.54
+Command: "Enter room 6"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Go to room 2"
+Coordinates: x=-4.263940811157227, y=-11.712596893310547, theta=-0.01
+Command: "Enter the house"
+Coordinates: x=-2.5027265548706055, y=-4.206264019012451, theta=2.97
+Command: "Head to room 06"
+Coordinates: x=-3.3012797832489014, y=-5.339881420135498, theta=-1.6
+Command: "Head to the fourth room"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52
+Command: "Navigate to room 04"
+Coordinates: x=-7.529297828674316, y=-2.9056077003479004, theta=-1.52

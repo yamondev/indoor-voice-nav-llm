@@ -44,19 +44,50 @@ from std_msgs.msg import String
 import json
 import os
 import time
-import openai
+from openai import OpenAI
+from ament_index_python.packages import get_package_share_directory
+import os
+import yaml
+
+
 from llm_config.user_config import UserConfig
 
 
 # Global Initialization
 config = UserConfig()
-openai.api_key = config.openai_api_key
 # openai.organization = config.openai_organization
-
+client = OpenAI(api_key=config.openai_api_key)
 
 class ChatGPTNode(Node):
     def __init__(self):
         super().__init__("ChatGPT_node")
+        
+        # Charger le contenu des few-shot examples depuis un fichier texte
+        package_share = get_package_share_directory('llm_model')
+        few_shot_content_path = os.path.join(package_share, 'few_shot_content.txt')
+        with open(few_shot_content_path, "r") as f:
+            raw_prompt_template = f.read()
+
+        # Charger le fichier YAML contenant les coordonnées
+        locations_path = os.path.join(package_share, 'locations.yaml')
+        with open(locations_path, "r") as f:
+            locations = yaml.safe_load(f)
+
+        # Construire dynamiquement la liste des lieux
+        location_names = list(locations.keys())
+        locations_list_str = "\n".join([f"- {name}" for name in location_names])
+
+        # Remplacer le placeholder dans le prompt
+        self.few_shot_content = raw_prompt_template.replace("{locations_list}", locations_list_str)
+
+        # Few-shot examples for guiding the ChatGPT response
+        self.few_shot_examples = [
+            {"role": "system", "content": self.few_shot_content}
+        ]
+
+        # Initialize completed chat
+        self.completed_chat = []
+
         # Initialization publisher
         self.initialization_publisher = self.create_publisher(
             String, "/llm_initialization_state", 0
@@ -77,7 +108,6 @@ class ChatGPTNode(Node):
         self.llm_response_type_publisher = self.create_publisher(
             String, "/llm_response_type", 0
         )
-
         # LLM feedback for user publisher
         self.llm_feedback_publisher = self.create_publisher(
             String, "/llm_feedback_to_user", 0
@@ -120,7 +150,7 @@ class ChatGPTNode(Node):
         self.function_name = "null"
         # Initialization ready
         self.publish_string("llm_model_processing", self.initialization_publisher)
-
+        
     def state_listener_callback(self, msg):
         self.get_logger().debug(f"model node get current State:{msg}")
         # TODO
@@ -178,20 +208,17 @@ class ChatGPTNode(Node):
         """
         # Log
         self.get_logger().info(f"Sending messages to OpenAI: {messages_input}")
-        response = openai.ChatCompletion.create(
-            model=config.openai_model,
-            messages=messages_input,
-            functions=config.robot_functions_list,
-            function_call="auto",
-            # temperature=config.openai_temperature,
-            # top_p=config.openai_top_p,
-            # n=config.openai_n,
-            # stream=config.openai_stream,
-            # stop=config.openai_stop,
-            # max_tokens=config.openai_max_tokens,
-            # presence_penalty=config.openai_presence_penalty,
-            # frequency_penalty=config.openai_frequency_penalty,
-        )
+
+        response = client.chat.completions.create(model=config.openai_model,
+        messages=messages_input,
+        functions=config.robot_functions_list,
+        function_call="auto",
+        temperature=config.openai_temperature,
+        # top_p=config.openai_top_p,
+        n=config.openai_n,
+        # stream=config.openai_stream,
+        stop=config.openai_stop,
+        max_tokens=config.openai_max_tokens)
         # Log
         self.get_logger().info(f"OpenAI response: {response}")
         return response
@@ -203,9 +230,9 @@ class ChatGPTNode(Node):
         function_flag = 0: no function call, 1: function call
         """
         # Getting response information
-        message = chatgpt_response["choices"][0]["message"]
-        content = message.get("content")
-        function_call = message.get("function_call", None)
+        message = chatgpt_response.choices[0].message
+        content = message.content
+        function_call = message.function_call
 
         # Initializing function flag, 0: no function call, 1: function call
         function_flag = 0
@@ -297,6 +324,22 @@ class ChatGPTNode(Node):
         )
         self.publish_string(text, self.llm_feedback_publisher)
 
+    def prepare_messages(self, new_message):
+        """
+        Prepares the message list by appending the new user message
+        while including few-shot examples only for the current query.
+        """
+        # Start with few-shot examples
+        messages = self.few_shot_examples.copy()
+
+        # Add chat history (user-assistant exchanges only)
+        messages.extend(self.completed_chat)
+
+        # Add the new user message
+        messages.append({"role": "user", "content": new_message})
+
+        return messages
+
     def llm_callback(self, msg):
         """
         The llm_callback function is called when the ChatGPT service is called.
@@ -306,11 +349,11 @@ class ChatGPTNode(Node):
         self.get_logger().info("STATE: model_processing")
 
         self.get_logger().info(f"Input message received: {msg.data}")
-        # Add user message to chat history
+        # Prepare the message list with few-shot examples
         user_prompt = msg.data
-        self.add_message_to_history("user", user_prompt)
+        prepared_messages = self.prepare_messages(user_prompt)
         # Generate chat completion
-        chatgpt_response = self.generate_chatgpt_response(config.chat_history)
+        chatgpt_response = self.generate_chatgpt_response(prepared_messages)
         # Get response information
         message, text, function_call, function_flag = self.get_response_information(
             chatgpt_response
@@ -342,13 +385,11 @@ class ChatGPTNode(Node):
             self.publish_string(text, self.llm_feedback_publisher)
             # self.publish_string(json.dumps(text), self.llm_feedback_publisher)
 
-
 def main(args=None):
     rclpy.init(args=args)
     chatgpt = ChatGPTNode()
     rclpy.spin(chatgpt)
     rclpy.shutdown()
-
 
 if __name__ == "__main__":
     main()

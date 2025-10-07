@@ -48,7 +48,7 @@ class AudioInput(Node):
     def __init__(self):
         super().__init__("llm_audio_input")
         # tmp audio file
-        self.tmp_audio_file = "/tmp/user_audio_input.flac"
+        self.tmp_audio_file = "/home/yannick/user_audio_input.flac"
 
         # Initialization publisher
         self.initialization_publisher = self.create_publisher(

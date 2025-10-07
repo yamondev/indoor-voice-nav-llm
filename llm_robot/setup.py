@@ -11,13 +11,12 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools', 'llm_config'],
+    install_requires=['setuptools', 'llm_config', 'pytest'],
     zip_safe=True,
     maintainer='hermanye',
     maintainer_email='hermanye233@icloud.com',
     description='The llm_robot package provides a ChatGPT function call server to simulate function calls for any robot',
     license="Apache-2.0",
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             "turtle_robot = llm_robot.turtle_robot:main",

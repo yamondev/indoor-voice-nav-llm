@@ -1,0 +1,9 @@
+1. The robot must go to a point located at {distance} meters.
+
+2. The movement orientation is approximately {angle} degrees relative to north.
+
+3. Based on the technical standards of the Wayfindr Open Standard Recommendation 2.0, provide a clear, simple, and natural navigation instruction to a human inside a building.
+
+4. Use the following dictionary of words and expressions: {guidance_words_list}.
+
+5. If the command's language is English, Mandarin, Hindi, Spanish, or French, respond in the same language.

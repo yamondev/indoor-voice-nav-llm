@@ -1,0 +1,9 @@
+package.xml
+setup.py
+llm_interfaces.egg-info/PKG-INFO
+llm_interfaces.egg-info/SOURCES.txt
+llm_interfaces.egg-info/dependency_links.txt
+llm_interfaces.egg-info/entry_points.txt
+llm_interfaces.egg-info/requires.txt
+llm_interfaces.egg-info/top_level.txt
+llm_interfaces.egg-info/zip-safe

@@ -89,7 +89,7 @@ class AudioOutput(Node):
         )
 
         # Save the audio output to a file
-        output_file_path = "/tmp/speech_output.mp3"
+        output_file_path = "/home/yannick/speech_output.mp3"
         with open(output_file_path, "wb") as file:
             file.write(response["AudioStream"].read())
         # Play the audio output

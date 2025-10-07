@@ -41,14 +41,13 @@
 from .robot_behavior import RobotBehavior
 import os
 
-
 class UserConfig:
     def __init__(self):
         # OpenAI API related
         # [required]: OpenAI API key
         self.openai_api_key = os.getenv("OPENAI_API_KEY")
         # [required]: Name of the OpenAI language model to be used
-        self.openai_model = "gpt-3.5-turbo-0613"
+        self.openai_model = "gpt-4o"
         # self.openai_model="gpt-4-0613"
         # [optional]: Name of the organization under which the OpenAI API key is registered
         self.openai_organization = "Auromix"
@@ -105,9 +104,9 @@ class UserConfig:
         # [required]: AWS IAM secret access key
         self.aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
         # [required]: AWS IAM region name
-        self.aws_region_name = 'ap-southeast-1'
+        self.aws_region_name = 'us-east-2'
         # [required]: AWS S3 bucket name
-        self.bucket_name = 'auromixbucket'
+        self.bucket_name = 'LLMROS'
         # [optional]: AWS transcription language, change this to 'zh-CN' for Chinese
         self.aws_transcription_language = "en-US"
         # [optional]: AWS polly voice id, change this to 'Zhiyu' for Chinese
@@ -120,9 +119,9 @@ class UserConfig:
         self.whisper_language="en"
         # Audio recording related
         # [optional]: Audio recording duration, in seconds
-        self.duration = 5
+        self.duration = 10
         # [optional]: Audio recording sample rate, in Hz
         self.sample_rate = 16000
         # [optional]: Audio recording gain multiplier
         # Change this to increase or decrease the volume
-        self.volume_gain_multiplier = 1
+        self.volume_gain_multiplier = 10

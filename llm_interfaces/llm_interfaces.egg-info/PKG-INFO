@@ -1,0 +1,10 @@
+Metadata-Version: 1.2
+Name: llm-interfaces
+Version: 0.0.1
+Summary: Package providing ROS messages and services for LLM integration.
+Home-page: UNKNOWN
+Maintainer: Your Name
+Maintainer-email: your_email@example.com
+License: Apache License 2.0
+Description: UNKNOWN
+Platform: UNKNOWN

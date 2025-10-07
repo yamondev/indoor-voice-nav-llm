@@ -1,0 +1,50 @@
+Avancer
+Reculer
+Tourner
+Continuer
+Stopper
+S’approcher
+S’éloigner
+Traverser
+Contourner
+Pénétrer
+Entrer
+Sortir
+Ouvrir
+Fermer
+Appuyer
+Attendre
+Suivre
+Descendre
+Monter
+Traverser
+Gauche
+Droite
+Devant
+Derrière
+À côté
+En face
+À l’angle
+À proximité
+À mi-chemin
+À hauteur
+Tournez à gauche
+Tournez à droite
+Faites demi-tour
+Prenez l’escalier
+Continuez tout droit
+Allez jusqu’au bout
+Entrez dans l’ascenseur
+Sortez à l’étage
+Suivez le couloir
+Prenez la première à gauche
+Prenez la première à droite
+Marchez 10 mètres
+Franchissez la porte
+Prenez la rampe
+Changez d’étage
+Arrêtez-vous
+Redémarrez
+Traversez le hall
+Suivez les balises
+Dirigez-vous vers la sortie

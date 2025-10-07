@@ -20,13 +20,12 @@ setup(
             glob(os.path.join("launch", "*launch.[pxy][yma]*")),
         ),
     ],
-    install_requires=['setuptools', 'llm_config'],
+    install_requires=['setuptools', 'llm_config', 'pytest'],
     zip_safe=True,
     maintainer='hermanye',
     maintainer_email='hermanye233@icloud.com',
     description='ROS-LLM bringup package for ROS2',
     license='Apache-2.0',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
         ],
