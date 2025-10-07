@@ -86,6 +86,7 @@ colcon build
 ```
 
 **6. Run the Demo:**
+
 Open the map.
 ```bash
 ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
