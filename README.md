@@ -3,7 +3,6 @@
 [![Ubuntu VERSION](https://img.shields.io/badge/Ubuntu-22.04-green)](https://ubuntu.com/) &nbsp; [![LICENSE](https://img.shields.io/badge/license-Apache--2.0-informational)](https://github.com/Auromix/ROS-LLM/blob/ros2-humble/LICENSE) &nbsp;
 [![GitHub Repo stars](https://img.shields.io/github/stars/Auromix/ROS-LLM?style=social)](https://github.com/Auromix/ROS-LLM/stargazers) &nbsp;
 [![Twitter Follow](https://img.shields.io/twitter/follow/Hermanye233?style=social)](https://twitter.com/Hermanye233) &nbsp;
-[![Linkedin Follow](https://www.google.com/imgres?q=logo%20linkedin&imgurl=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F81%2FLinkedIn_icon.svg%2F1024px-LinkedIn_icon.svg.png&imgrefurl=https%3A%2F%2Ffr.m.wikipedia.org%2Fwiki%2FFichier%3ALinkedIn_icon.svg&docid=jiIyFt08RnwmdM&tbnid=2Zjqgp_5jcsgKM&vet=12ahUKEwjoiKj5rY6QAxV5lYkEHYA8GQYQM3oECB4QAA..i&w=1024&h=1024&hcb=2&ved=2ahUKEwjoiKj5rY6QAxV5lYkEHYA8GQYQM3oECB4QAA)](https://www.linkedin.com/in/yannickmoussima/) &nbsp;
 # ROS-LLM
 The ROS-LLM project is a ROS framework for embodied intelligence applications. It enables natural language interactions and large model-based control of robot motion and navigation for any robot operating on ROS.
 
