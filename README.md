@@ -1,4 +1,4 @@
-[![Official](https://img.shields.io/badge/Official%20-Auromix-blue?style=flat&logo=world&logoColor=white)](https://github.com/Auromix) &nbsp;
+[![Official](https://img.shields.io/badge/Official%20-yamondev-blue?style=flat&logo=world&logoColor=white)](https://github.com/yamondev) &nbsp;
 [![ROS2 VERSION](https://img.shields.io/badge/ROS-ROS%202%20Humble-brightgreen)](http://docs.ros.org/en/humble/index.html) &nbsp;
 [![Ubuntu VERSION](https://img.shields.io/badge/Ubuntu-22.04-green)](https://ubuntu.com/) &nbsp; [![LICENSE](https://img.shields.io/badge/license-Apache--2.0-informational)](https://github.com/Auromix/ROS-LLM/blob/ros2-humble/LICENSE) &nbsp;
 [![GitHub Repo stars](https://img.shields.io/github/stars/yamondev/indoor-voice-nav-llm?style=social)](https://github.com/yamondev/indoor-voice-nav-llm/stargazers) &nbsp;
